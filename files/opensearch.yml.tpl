@@ -23,8 +23,8 @@ plugins.security.ssl.transport.enforce_hostname_verification: false
 plugins.security.ssl.transport.resolve_hostname: false
 %{ endif ~}
 plugins.security.ssl.http.clientauth_mode: REQUIRE
-plugins.security.ssl.transport.pemkey_filepath: /etc/opensearch/server-certs/server.crt
-plugins.security.ssl.transport.pemcert_filepath: /etc/opensearch/server-certs/server.key
+plugins.security.ssl.transport.pemkey_filepath: /etc/opensearch/server-certs/server.key
+plugins.security.ssl.transport.pemcert_filepath: /etc/opensearch/server-certs/server.crt
 plugins.security.ssl.transport.pemtrustedcas_filepath: /etc/opensearch/ca-certs/ca.crt
 plugins.security.ssl.http.pemkey_filepath: /etc/opensearch/server-certs/server.crt
 plugins.security.ssl.http.pemcert_filepath: /etc/opensearch/server-certs/server.key
