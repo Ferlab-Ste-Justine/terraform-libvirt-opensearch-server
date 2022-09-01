@@ -172,6 +172,12 @@ write_files:
       #performance analyzer
       CLK_TCK=$(/usr/bin/getconf CLK_TCK)
       echo "-Dclk.tck=$CLK_TCK" >> /etc/opensearch/configuration/jvm.options
+  - path: /usr/local/bin/adjust_tls_key_format
+    owner: root:root
+    permissions: "0555"
+    content: |
+      #!/bin/bash
+      openssl pkcs8 -in /etc/opensearch/server-certs/server.key -topk8 -nocrypt -out /etc/opensearch/server-certs/server-key-pk8.pem
   - path: /etc/opensearch/configuration/opensearch.yml
     owner: root:root
     permissions: "0444"
@@ -276,6 +282,7 @@ runcmd:
 %{ endif ~}
   #Install Opensearch
   - /usr/local/bin/set_dynamic_opensearch_java_options
+  - /usr/local/bin/adjust_tls_key_format
   - echo 'vm.max_map_count=262144' >> /etc/sysctl.conf
   - echo 'vm.swappiness = 1' >> /etc/sysctl.conf
   - sysctl -p
