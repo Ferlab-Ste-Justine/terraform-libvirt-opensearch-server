@@ -13,7 +13,6 @@ discovery.seed_hosts:
 %{ for seed_host in opensearch.seed_hosts ~}
   - ${seed_host}
 %{ endfor ~}
-discovery.zen.minimum_master_nodes: ${length(opensearch.seed_hosts)}
 plugins.security.ssl.http.enabled: true
 %{ if opensearch.verify_domains ~}
 plugins.security.ssl.transport.enforce_hostname_verification: true

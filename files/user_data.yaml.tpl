@@ -137,9 +137,10 @@ write_files:
     owner: root:root
     permissions: "0644"
     content: |
-      log4j.rootLogger = INFO,CONSOLE
-      log4j.appender.console=org.apache.log4j.ConsoleAppender
-      log4j.appender.CONSOLE.Threshold=INFO
+      log4j.rootLogger = INFO, CONSOLE
+      log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender
+      log4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout
+      log4j.appender.CONSOLE.layout.pattern = [%d{ISO8601}][%-5p][%-25c{1.}] [%node_name]%marker %m%n
   - path: /etc/opensearch/configuration/jvm.options
     owner: root:root
     permissions: "0644"
@@ -157,6 +158,9 @@ write_files:
       -Djdk.attach.allowAttachSelf=true
       -Djava.security.policy=/opt/opensearch/plugins/opensearch-performance-analyzer/plugin-security.policy
       --add-opens=jdk.attach/sun.tools.attach=ALL-UNNAMED
+  
+      #Might not be needed
+      -Djava.security.manager=allow
   - path: /usr/local/bin/set_dynamic_opensearch_java_options
     owner: root:root
     permissions: "0555"
@@ -210,6 +214,30 @@ write_files:
                 challenge: false
               authentication_backend:
                 type: noop
+  #Performance analyser configuration
+  - path: /etc/opensearch/configuration/opensearch-performance-analyzer/performance-analyzer.properties
+    owner: root:root
+    permissions: "0444"
+    content: |
+      metrics-location = /dev/shm/performanceanalyzer/
+      metrics-deletion-interval = 1
+      cleanup-metrics-db-files = true
+      webservice-listener-port = 9600
+      rpc-port = 9650
+      metrics-db-file-prefix-path = /tmp/metricsdb_
+      https-enabled = false
+      plugin-stats-metadata = plugin-stats-metadata
+      agent-stats-metadata = agent-stats-metadata
+  - path: /etc/opensearch/configuration/opensearch-performance-analyzer/plugin-stats-metadata
+    owner: root:root
+    permissions: "0600"
+    content: |
+      Program=PerformanceAnalyzerPlugin
+  - path: /etc/opensearch/configuration/opensearch-performance-analyzer/agent-stats-metadata
+    owner: root:root
+    permissions: "0600"
+    content: |
+      Program=PerformanceAnalyzerAgent
   #opensearch systemd configuration
   - path: /etc/systemd/system/opensearch.service
     owner: root:root
