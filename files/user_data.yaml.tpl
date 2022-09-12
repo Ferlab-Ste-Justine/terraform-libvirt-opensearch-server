@@ -9,12 +9,14 @@ preserve_hostname: false
 hostname: ${node_name}
 users:
   - default
+%{ if install_dependencies ~}
   - name: node-exporter
     system: true
     lock_passwd: true
   - name: opensearch
     system: true
     lock_passwd: true
+%{ endif ~}
   - name: ${ssh_admin_user}
     ssh_authorized_keys:
       - "${ssh_admin_public_key}"
@@ -269,12 +271,8 @@ write_files:
       [Install]
       WantedBy=multi-user.target
 packages:
-  - apt-transport-https
-  - ca-certificates
+%{ if install_dependencies ~}
   - curl
-  - gnupg-agent
-  - software-properties-common
-  - libdigest-sha-perl
   - jq
 %{ if fluentd.enabled ~}
   - ruby-full
@@ -283,6 +281,7 @@ packages:
 %{ if chrony.enabled ~}
   - chrony
 %{ endif ~}
+%{ endif ~}
 runcmd:
   #Finalize Chrony Setup
 %{ if chrony.enabled ~}
@@ -290,35 +289,41 @@ runcmd:
   - systemctl restart chrony.service 
 %{ endif ~}
   #Install prometheus node exporter as a binary managed as a systemd service
+%{ if install_dependencies ~}
   - wget -O /opt/node_exporter.tar.gz https://github.com/prometheus/node_exporter/releases/download/v1.3.0/node_exporter-1.3.0.linux-amd64.tar.gz
   - mkdir -p /opt/node_exporter
   - tar zxvf /opt/node_exporter.tar.gz -C /opt/node_exporter
   - cp /opt/node_exporter/node_exporter-1.3.0.linux-amd64/node_exporter /usr/local/bin/node_exporter
   - chown node-exporter:node-exporter /usr/local/bin/node_exporter
   - rm -r /opt/node_exporter && rm /opt/node_exporter.tar.gz
+%{ endif ~}
   - systemctl enable node-exporter
   - systemctl start node-exporter
   #Fluentd setup
 %{ if fluentd.enabled ~}
+%{ if install_dependencies ~}
+  - gem install fluentd
+  - gem install fluent-plugin-systemd -v 1.0.5
+%{ endif ~}
   - mkdir -p /opt/fluentd-state
   - chown root:root /opt/fluentd-state
   - chmod 0700 /opt/fluentd-state
-  - gem install fluentd
-  - gem install fluent-plugin-systemd -v 1.0.5
   - systemctl enable fluentd.service
   - systemctl start fluentd.service
 %{ endif ~}
   #Install Opensearch
+%{ if install_dependencies ~}
+  - wget -O /opt/opensearch.tar.gz https://artifacts.opensearch.org/releases/bundle/opensearch/2.2.1/opensearch-2.2.1-linux-x64.tar.gz
+  - tar zxvf /opt/opensearch.tar.gz -C /opt
+  - mv /opt/opensearch-2.2.1 /opt/opensearch
+  - chown -R opensearch:opensearch /opt/opensearch
+  - rm /opt/opensearch.tar.gz
+%{ endif ~}
   - /usr/local/bin/set_dynamic_opensearch_java_options
   - /usr/local/bin/adjust_tls_key_format
   - echo 'vm.max_map_count=262144' >> /etc/sysctl.conf
   - echo 'vm.swappiness = 1' >> /etc/sysctl.conf
   - sysctl -p
-  - wget -O /opt/opensearch.tar.gz https://artifacts.opensearch.org/releases/bundle/opensearch/2.2.0/opensearch-2.2.0-linux-x64.tar.gz
-  - tar zxvf /opt/opensearch.tar.gz -C /opt
-  - mv /opt/opensearch-2.2.0 /opt/opensearch
-  - chown -R opensearch:opensearch /opt/opensearch
-  - rm /opt/opensearch.tar.gz
   - chown -R opensearch:opensearch /etc/opensearch
   - systemctl enable opensearch.service
   - systemctl start opensearch.service

@@ -145,6 +145,7 @@ variable "fluentd" {
 }
 
 variable "opensearch" {
+  description = "Opensearch configurations"
   type = object({
     cluster_name          = string
     manager               = bool
@@ -166,4 +167,10 @@ variable "opensearch" {
     })
     verify_domains      = bool 
   })
+}
+
+variable "install_dependencies" {
+  description = "Whether to install all dependencies in cloud-init"
+  type = bool
+  default = true
 }

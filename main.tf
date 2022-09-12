@@ -64,6 +64,7 @@ data "template_cloudinit_config" "user_data" {
         opensearch_admin_tls_key = var.opensearch.bootstrap_security ? tls_private_key.admin.0.private_key_pem : ""
         opensearch_config = local.opensearch_conf
         node_ip = local.ips.0
+        install_dependencies = var.install_dependencies
       }
     )
   }
