@@ -11,8 +11,8 @@ resource "tls_cert_request" "server" {
     organization = var.opensearch.auth_dn_fields.organization
   }
 
-  dns_names = var.opensearch.certificates.domains
-  ip_addresses = [local.ips.0]
+  dns_names = concat(var.opensearch.certificates.domains, ["localhost"])
+  ip_addresses = [local.ips.0, "127.0.0.1"]
 }
 
 resource "tls_locally_signed_cert" "server" {

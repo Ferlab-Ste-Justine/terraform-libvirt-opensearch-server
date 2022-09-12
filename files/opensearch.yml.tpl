@@ -8,7 +8,7 @@ node.roles:
   - data
   - ingest
 %{ endif ~}
-network.host: ${node_ip}
+network.host: [_local_, "${node_ip}"]
 discovery.seed_hosts:
 %{ for seed_host in opensearch.seed_hosts ~}
   - ${seed_host}

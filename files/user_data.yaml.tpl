@@ -127,8 +127,10 @@ write_files:
           sleep 1
           STATUS=$(curl --silent --cert /etc/opensearch/client-certs/admin.crt --key /etc/opensearch/client-certs/admin.key --cacert /etc/opensearch/ca-certs/ca.crt https://${node_ip}:9200/_cluster/health | jq ".status")
       done
+      export JAVA_HOME=/opt/opensearch/jdk
+      chmod +x /opt/opensearch/plugins/opensearch-security/tools/securityadmin.sh
       /opt/opensearch/plugins/opensearch-security/tools/securityadmin.sh \
-        -f /etc/opensearch/configuration/opensearch-security.yml \
+        -cd /etc/opensearch/configuration/opensearch-security \
         -icl -nhnv -cert /etc/opensearch/client-certs/admin.crt \
         -key /etc/opensearch/client-certs/admin.key \
         -cacert /etc/opensearch/ca-certs/ca.crt \
@@ -189,7 +191,7 @@ write_files:
     permissions: "0444"
     content: |
       ${indent(6, opensearch_config)}
-  - path: /etc/opensearch/configuration/opensearch-security.yml
+  - path: /etc/opensearch/configuration/opensearch-security/opensearch-security.yml
     owner: root:root
     permissions: "0444"
     content: |
