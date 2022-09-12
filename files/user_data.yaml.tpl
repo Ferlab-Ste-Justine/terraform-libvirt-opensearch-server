@@ -127,12 +127,13 @@ write_files:
           sleep 1
           STATUS=$(curl --silent --cert /etc/opensearch/client-certs/admin.crt --key /etc/opensearch/client-certs/admin.key --cacert /etc/opensearch/ca-certs/ca.crt https://${node_ip}:9200/_cluster/health | jq ".status")
       done
+      echo "Bootstraping opensearch security"
       export JAVA_HOME=/opt/opensearch/jdk
       chmod +x /opt/opensearch/plugins/opensearch-security/tools/securityadmin.sh
       /opt/opensearch/plugins/opensearch-security/tools/securityadmin.sh \
         -cd /etc/opensearch/configuration/opensearch-security \
         -icl -nhnv -cert /etc/opensearch/client-certs/admin.crt \
-        -key /etc/opensearch/client-certs/admin.key \
+        -key /etc/opensearch/client-certs/admin-key-pk8.pem \
         -cacert /etc/opensearch/ca-certs/ca.crt \
         -t config
 %{ endif ~}
@@ -186,6 +187,9 @@ write_files:
     content: |
       #!/bin/bash
       openssl pkcs8 -in /etc/opensearch/server-certs/server.key -topk8 -nocrypt -out /etc/opensearch/server-certs/server-key-pk8.pem
+%{ if opensearch.bootstrap_security ~}
+      openssl pkcs8 -in /etc/opensearch/client-certs/admin.key -topk8 -nocrypt -out /etc/opensearch/client-certs/admin-key-pk8.pem
+%{ endif ~}
   - path: /etc/opensearch/configuration/opensearch.yml
     owner: root:root
     permissions: "0444"
