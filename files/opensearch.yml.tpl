@@ -38,3 +38,7 @@ plugins.security.nodes_dn:
   - "CN=${opensearch.auth_dn_fields.node_common_name},O=${opensearch.auth_dn_fields.organization}"
 plugins.security.authcz.admin_dn:
   - "CN=${opensearch.auth_dn_fields.admin_common_name},O=${opensearch.auth_dn_fields.organization}"
+prometheus.metric_name.prefix: "opensearch_"
+prometheus.indices: true
+prometheus.cluster.settings: true
+prometheus.nodes.filter: "_all"

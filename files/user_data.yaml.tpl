@@ -351,6 +351,7 @@ runcmd:
   - wget -O /opt/opensearch.tar.gz https://artifacts.opensearch.org/releases/bundle/opensearch/2.2.1/opensearch-2.2.1-linux-x64.tar.gz
   - tar zxvf /opt/opensearch.tar.gz -C /opt
   - mv /opt/opensearch-2.2.1 /opt/opensearch
+  - /opt/opensearch/bin/opensearch-plugin install -b https://github.com/aiven/prometheus-exporter-plugin-for-opensearch/releases/download/2.2.1.0/prometheus-exporter-2.2.1.0.zip
   - chown -R opensearch:opensearch /opt/opensearch
   - rm /opt/opensearch.tar.gz
 %{ endif ~}
