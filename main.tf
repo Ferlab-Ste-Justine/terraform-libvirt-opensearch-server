@@ -31,12 +31,22 @@ locals {
       fluentd_buffer_conf = var.fluentd.buffer.customized ? var.fluentd.buffer.custom_value : file("${path.module}/files/fluentd_buffer.conf")
     }
   )
-  opensearch_conf = templatefile(
-    "${path.module}/files/opensearch.yml.tpl", 
+  opensearch_bootstrap_conf = templatefile(
+    "${path.module}/files/opensearch.yml.tpl",
     {
       opensearch = var.opensearch
       node_name = var.name
       node_ip = local.ips.0
+      initial_cluster = var.opensearch.initial_cluster
+    }
+  )
+  opensearch_runtime_conf = templatefile(
+    "${path.module}/files/opensearch.yml.tpl",
+    {
+      opensearch = var.opensearch
+      node_name = var.name
+      node_ip = local.ips.0
+      initial_cluster = false
     }
   )
 }
@@ -62,7 +72,8 @@ data "template_cloudinit_config" "user_data" {
         ca_tls_cert = var.opensearch.ca.certificate
         opensearch_admin_tls_cert = var.opensearch.bootstrap_security ? tls_locally_signed_cert.admin.0.cert_pem : ""
         opensearch_admin_tls_key = var.opensearch.bootstrap_security ? tls_private_key.admin.0.private_key_pem : ""
-        opensearch_config = local.opensearch_conf
+        opensearch_bootstrap_conf = local.opensearch_bootstrap_conf
+        opensearch_runtime_conf = local.opensearch_runtime_conf
         node_ip = local.ips.0
         install_dependencies = var.install_dependencies
       }

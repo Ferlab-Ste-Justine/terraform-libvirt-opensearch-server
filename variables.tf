@@ -151,6 +151,7 @@ variable "opensearch" {
     manager               = bool
     seed_hosts            = list(string)
     bootstrap_security    = bool
+    initial_cluster       = bool
     ca                 = object({
       certificate   = string
       key           = string

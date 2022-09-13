@@ -8,7 +8,13 @@ node.roles:
   - data
   - ingest
 %{ endif ~}
-network.host: [_local_, "${node_ip}"]
+network.host: ["${node_ip}", _local_]
+%{ if initial_cluster ~}
+cluster.initial_master_nodes:
+%{ for seed_host in opensearch.seed_hosts ~}
+  - ${seed_host}
+%{ endfor ~}
+%{ endif ~}
 discovery.seed_hosts:
 %{ for seed_host in opensearch.seed_hosts ~}
   - ${seed_host}

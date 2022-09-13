@@ -117,16 +117,19 @@ write_files:
     permissions: "0400"
     content: |
       ${indent(6, opensearch_admin_tls_key)}
-  - path: /usr/local/bin/bootstrap_opensearch_security
+%{ endif ~}
+  - path: /usr/local/bin/bootstrap_opensearch
     owner: root:root
     permissions: "0555"
     content: |
+      #!/bin/bash
       echo "Waiting for server to join cluster with green status before bootstraping security"
       STATUS=$(curl --silent --cert /etc/opensearch/client-certs/admin.crt --key /etc/opensearch/client-certs/admin.key --cacert /etc/opensearch/ca-certs/ca.crt https://${node_ip}:9200/_cluster/health | jq ".status")
       while [ "$STATUS" != "\"green\"" ]; do
           sleep 1
           STATUS=$(curl --silent --cert /etc/opensearch/client-certs/admin.crt --key /etc/opensearch/client-certs/admin.key --cacert /etc/opensearch/ca-certs/ca.crt https://${node_ip}:9200/_cluster/health | jq ".status")
       done
+%{ if opensearch.bootstrap_security ~}
       echo "Bootstraping opensearch security"
       export JAVA_HOME=/opt/opensearch/jdk
       chmod +x /opt/opensearch/plugins/opensearch-security/tools/securityadmin.sh
@@ -137,6 +140,9 @@ write_files:
         -cacert /etc/opensearch/ca-certs/ca.crt \
         -t config
 %{ endif ~}
+      echo "Swaping bootstrap configuration for runtime configuration"
+      cp /etc/opensearch/runtime-configuration/opensearch.yml /etc/opensearch/configuration/opensearch.yml
+      chown opensearch:opensearch /etc/opensearch/configuration/opensearch.yml
   #opensearch configuration
   - path: /etc/opensearch/configuration/log4j2.properties
     owner: root:root
@@ -194,8 +200,13 @@ write_files:
     owner: root:root
     permissions: "0444"
     content: |
-      ${indent(6, opensearch_config)}
-  - path: /etc/opensearch/configuration/opensearch-security/opensearch-security.yml
+      ${indent(6, opensearch_bootstrap_conf)}
+  - path: /etc/opensearch/runtime-configuration/opensearch.yml
+    owner: root:root
+    permissions: "0444"
+    content: |
+      ${indent(6, opensearch_runtime_conf)}
+  - path: /etc/opensearch/configuration/opensearch-security/config.yml
     owner: root:root
     permissions: "0444"
     content: |
@@ -333,6 +344,4 @@ runcmd:
   - chown -R opensearch:opensearch /etc/opensearch
   - systemctl enable opensearch.service
   - systemctl start opensearch.service
-%{ if opensearch.bootstrap_security ~}
-  - /usr/local/bin/bootstrap_opensearch_security
-%{ endif ~}
+  - /usr/local/bin/bootstrap_opensearch
