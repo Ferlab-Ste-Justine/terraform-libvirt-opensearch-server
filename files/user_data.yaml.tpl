@@ -169,7 +169,10 @@ write_files:
       -Djdk.attach.allowAttachSelf=true
       -Djava.security.policy=/opt/opensearch/plugins/opensearch-performance-analyzer/plugin-security.policy
       --add-opens=jdk.attach/sun.tools.attach=ALL-UNNAMED
-  
+
+      # JVM temporary directory
+      -Djava.io.tmpdir=/opt/opensearch-jvm-temp
+
       #Might not be needed
       -Djava.security.manager=allow
   - path: /usr/local/bin/set_dynamic_opensearch_java_options
@@ -355,6 +358,8 @@ runcmd:
   - chown -R opensearch:opensearch /opt/opensearch
   - rm /opt/opensearch.tar.gz
 %{ endif ~}
+  - mkdir -p /opt/opensearch-jvm-temp
+  - chown -R opensearch:opensearch /opt/opensearch-jvm-temp
   - /usr/local/bin/set_dynamic_opensearch_java_options
   - /usr/local/bin/adjust_tls_key_format
   - echo 'vm.max_map_count=262144' >> /etc/sysctl.conf
