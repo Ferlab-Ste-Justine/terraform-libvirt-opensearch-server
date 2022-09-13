@@ -210,29 +210,47 @@ write_files:
     owner: root:root
     permissions: "0444"
     content: |
-      _meta:
-        type: "config"
-        config_version: 2
-
-      config:
-        dynamic:
-          http:
-            anonymous_auth_enabled: false
-            xff:
-              enabled: false
-          authc:
-            clientcert_auth_domain:
-              description: "Authenticate via TLS client certificates"
-              http_enabled: true
-              transport_enabled: true
-              order: 1
-              http_authenticator:
-                type: clientcert
-                config:
-                  username_attribute: cn
-                challenge: false
-              authentication_backend:
-                type: noop
+      ${indent(6, opensearch_security_conf.config)}
+  - path: /etc/opensearch/configuration/opensearch-security/internal_users.yml
+    owner: root:root
+    permissions: "0444"
+    content: |
+      ${indent(6, opensearch_security_conf.internal_users)}
+  - path: /etc/opensearch/configuration/opensearch-security/roles.yml
+    owner: root:root
+    permissions: "0444"
+    content: |
+      ${indent(6, opensearch_security_conf.roles)}
+  - path: /etc/opensearch/configuration/opensearch-security/roles_mapping.yml
+    owner: root:root
+    permissions: "0444"
+    content: |
+      ${indent(6, opensearch_security_conf.roles_mapping)}
+  - path: /etc/opensearch/configuration/opensearch-security/action_groups.yml
+    owner: root:root
+    permissions: "0444"
+    content: |
+      ${indent(6, opensearch_security_conf.action_groups)}
+  - path: /etc/opensearch/configuration/opensearch-security/allowlist.yml
+    owner: root:root
+    permissions: "0444"
+    content: |
+      ${indent(6, opensearch_security_conf.allowlist)}
+  - path: /etc/opensearch/configuration/opensearch-security/tenants.yml
+    owner: root:root
+    permissions: "0444"
+    content: |
+      ${indent(6, opensearch_security_conf.tenants)}
+  - path: /etc/opensearch/configuration/opensearch-security/nodes_dn.yml
+    owner: root:root
+    permissions: "0444"
+    content: |
+      ${indent(6, opensearch_security_conf.nodes_dn)}
+  - path: /etc/opensearch/configuration/opensearch-security/whitelist.yml
+    owner: root:root
+    permissions: "0444"
+    content: |
+      ${indent(6, opensearch_security_conf.whitelist)}
   #Performance analyser configuration
   - path: /etc/opensearch/configuration/opensearch-performance-analyzer/performance-analyzer.properties
     owner: root:root

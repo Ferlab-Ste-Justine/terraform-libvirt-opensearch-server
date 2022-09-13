@@ -49,6 +49,17 @@ locals {
       initial_cluster = false
     }
   )
+  opensearch_security_conf = {
+    config = file("${path.module}/files/opensearch_security/config.yml")
+    allowlist = file("${path.module}/files/opensearch_security/allowlist.yml")
+    internal_users = file("${path.module}/files/opensearch_security/internal_users.yml")
+    roles = file("${path.module}/files/opensearch_security/roles.yml")
+    roles_mapping = file("${path.module}/files/opensearch_security/roles_mapping.yml")
+    action_groups = file("${path.module}/files/opensearch_security/action_groups.yml")
+    tenants = file("${path.module}/files/opensearch_security/tenants.yml")
+    nodes_dn = file("${path.module}/files/opensearch_security/nodes_dn.yml")
+    whitelist = file("${path.module}/files/opensearch_security/whitelist.yml")
+  }
 }
 
 data "template_cloudinit_config" "user_data" {
@@ -74,6 +85,7 @@ data "template_cloudinit_config" "user_data" {
         opensearch_admin_tls_key = var.opensearch.bootstrap_security ? tls_private_key.admin.0.private_key_pem : ""
         opensearch_bootstrap_conf = local.opensearch_bootstrap_conf
         opensearch_runtime_conf = local.opensearch_runtime_conf
+        opensearch_security_conf = local.opensearch_security_conf
         node_ip = local.ips.0
         install_dependencies = var.install_dependencies
       }
