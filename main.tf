@@ -50,7 +50,12 @@ locals {
     }
   )
   opensearch_security_conf = {
-    config = file("${path.module}/files/opensearch_security/config.yml")
+    config = templatefile(
+        "${path.module}/files/opensearch_security/config.yml.tpl",
+        {
+            opensearch = var.opensearch
+        }
+    )
     allowlist = file("${path.module}/files/opensearch_security/allowlist.yml")
     internal_users = file("${path.module}/files/opensearch_security/internal_users.yml")
     roles = file("${path.module}/files/opensearch_security/roles.yml")
