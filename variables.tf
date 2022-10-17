@@ -167,6 +167,7 @@ variable "opensearch" {
       early_renewal_period = number
     })
     verify_domains      = bool 
+    basic_auth_enabled  = bool
   })
 }
 

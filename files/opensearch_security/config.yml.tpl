@@ -21,3 +21,15 @@ config:
           challenge: false
         authentication_backend:
           type: noop
+%{ if opensearch.basic_auth_enabled ~}
+      basic_auth_domain:
+        description: "Authenticate via username and password"
+        http_enabled: true
+        transport_enabled: false
+        order: 2
+        http_authenticator:
+          type: basic
+          challenge: true
+        authentication_backend:
+          type: intern
+%{ endif ~}
