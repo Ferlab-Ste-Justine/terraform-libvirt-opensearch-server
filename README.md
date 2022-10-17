@@ -72,5 +72,5 @@ This module also supports pre-built images. See the following for the expectatio
     - **validity_period**: Validity period of the certificate in hours.
     - **early_renewal_period**: Early renewal period of the certificate in hours. Should be a small value relative to the validity_period.
   - **verify_domains**: Whether the domain information in the node certificates should be verified to see if it corresponds to the nodes (that is additional validation on top of the CN validation).
-  - **basic_auth_enabled**: Whether basic auth should be enabled in addition to certificate authentication
+  - **basic_auth_enabled**: Whether basic auth should be enabled as an alternate to certificate authentication as a way to login.
 - **install_dependencies**: Whether cloud-init should install external dependencies (should be set to false if you already provide an image with the external dependencies built-in).
