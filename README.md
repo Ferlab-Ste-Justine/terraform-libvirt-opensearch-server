@@ -60,17 +60,18 @@ This module also supports pre-built images. See the following for the expectatio
   - **seed_hosts**: List of manager nodes that the nodes should synchronize to in order to join the cluster. Should be ips or domain names.
   - **bootstrap_security**: Whether the node should bootstrap opensearch security. One and only one node should have this flag set to true when the opensearch cluster is initially created.
   - **initial_cluster**: Whether this node is created as part of the initial cluster that will form opensearch. Nodes that are added to the cluster afterwards should set this to false.
-  - **ca**: Certificate authority that will be used to generate all the clusters' server certificates (and will also be used to authentify clients). Should be the same for all nodes. It is expected to have the following keys:
-    - **key**: The certificate authority's private key
-    - **certificate**: The certificate authority's public certificate
+  - **tls**: Parameters to setup tls certificates for networking traffic between cluster members and with clients. It takes the following keys:
+    - **ca_certificate**: Certificate of the CA used to sign all other certificates (both for the servers and clients)
+    - **server**: Tls credentials for the opensearch nodes
+      - **key**: Private tls key
+      - **certificate**: Public tls certificate
+    - **admin_client**: Tls credentials for an admin client
+      - **key**: Private tls key
+      - **certificate**: Public tls certificate
   - **auth_dn_fields**: Fields in the certificates that will be used to authentify the admin client and other nodes. Should be the same for all nodes. It is expected to have the following keys:
     - **admin_common_name**: CN value that will identity/authentify the admin user in the admin's client certificate.
     - **node_common_name**: CN value that will identity/authentify this node and other nodes during node-to-node communication.
     - **organization**: Organization value (in the certificat's subject) that will also be used to identify/authentify the admin client and other nodes.
-  - **certificates**: Settings for the provisioned certificates. It has the following keys:
-    - **domains**: Additional domains to include in the server's certificate. **locahost** is implicitly appended to this list and should not be added.
-    - **validity_period**: Validity period of the certificate in hours.
-    - **early_renewal_period**: Early renewal period of the certificate in hours. Should be a small value relative to the validity_period.
   - **verify_domains**: Whether the domain information in the node certificates should be verified to see if it corresponds to the nodes (that is additional validation on top of the CN validation).
   - **basic_auth_enabled**: Whether basic auth should be enabled as an alternate to certificate authentication as a way to login.
 - **install_dependencies**: Whether cloud-init should install external dependencies (should be set to false if you already provide an image with the external dependencies built-in).

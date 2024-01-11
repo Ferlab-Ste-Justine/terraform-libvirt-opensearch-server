@@ -21,15 +21,15 @@ locals {
 }
 
 module "network_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//network?ref=main"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//network?ref=v0.16.0"
   network_interfaces = var.macvtap_interfaces
 }
 
 module "opensearch_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//opensearch?ref=main"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//opensearch?ref=v0.16.0"
   install_dependencies = var.install_dependencies
   opensearch_host = {
-    bind_ip            = local.ips.0
+    bind_ip            = local.ips[0]
     bootstrap_security = var.opensearch.bootstrap_security
     host_name          = var.name
     initial_cluster    = var.opensearch.initial_cluster
@@ -43,21 +43,21 @@ module "opensearch_configs" {
     verify_domains      = var.opensearch.verify_domains
   }
   tls = {
-    server_cert = tls_locally_signed_cert.server.cert_pem
-    server_key  = tls_private_key.server.private_key_pem
-    ca_cert     = var.opensearch.ca.certificate
-    admin_cert  = var.opensearch.bootstrap_security ? tls_locally_signed_cert.admin.0.cert_pem : ""
-    admin_key   = var.opensearch.bootstrap_security ? tls_private_key.admin.0.private_key_pem : ""
+    server_cert = var.opensearch.tls.server.certificate
+    server_key  = var.opensearch.tls.server.key
+    ca_cert     = var.opensearch.tls.ca_certificate
+    admin_cert  = var.opensearch.tls.admin_client.certificate
+    admin_key   = var.opensearch.tls.admin_client.key
   }
 }
 
 module "prometheus_node_exporter_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//prometheus-node-exporter?ref=main"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//prometheus-node-exporter?ref=v0.16.0"
   install_dependencies = var.install_dependencies
 }
 
 module "chrony_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//chrony?ref=main"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//chrony?ref=v0.16.0"
   install_dependencies = var.install_dependencies
   chrony = {
     servers  = var.chrony.servers
@@ -67,7 +67,7 @@ module "chrony_configs" {
 }
 
 module "fluentd_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//fluentd?ref=main"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//fluentd?ref=v0.16.0"
   install_dependencies = var.install_dependencies
   fluentd = {
     docker_services = []

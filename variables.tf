@@ -152,19 +152,21 @@ variable "opensearch" {
     seed_hosts            = list(string)
     bootstrap_security    = bool
     initial_cluster       = bool
-    ca                 = object({
-      certificate   = string
-      key           = string
+    tls                   = object({
+      ca_certificate = string
+      server         = object({
+        key         = string
+        certificate = string
+      })
+      admin_client   = object({
+        key         = string
+        certificate = string
+      })
     })
     auth_dn_fields        = object({
       admin_common_name = string
       node_common_name  = string
       organization      = string
-    })
-    certificates          = object({
-      domains              = list(string)
-      validity_period      = number
-      early_renewal_period = number
     })
     verify_domains      = bool 
     basic_auth_enabled  = bool
