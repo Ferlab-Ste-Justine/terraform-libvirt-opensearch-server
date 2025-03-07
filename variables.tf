@@ -20,17 +20,22 @@ variable "volume_id" {
   type        = string
 }
 
-variable "libvirt_network" {
-  description = "Parameters of the libvirt network connection if a libvirt network is used. Has the following parameters: network_id, ip, mac"
-  type = object({
-      network_id = string
-      ip = string
-      mac = string
-  })
-  default = {
-      network_id = ""
-      ip = ""
-      mac = ""
+variable "libvirt_networks" {
+  description = "Parameters of libvirt network connections if libvirt networks are used."
+  type = list(object({
+    network_name = optional(string, "")
+    network_id = optional(string, "")
+    prefix_length = string
+    ip = string
+    mac = string
+    gateway = optional(string, "")
+    dns_servers = optional(list(string), [])
+  }))
+  default = []
+
+  validation {
+    condition     = alltrue([for net in var.libvirt_networks: net.prefix_length != "" && net.ip != "" && net.mac != "" && ((net.network_name != "" && net.network_id == "") || (net.network_name == "" && net.network_id != ""))])
+    error_message = "Each entry in libvirt_networks must have the following keys defined and not empty: prefix_length, ip, mac, network_name xor network_id"
   }
 }
 
