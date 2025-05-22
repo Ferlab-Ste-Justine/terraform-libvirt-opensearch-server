@@ -47,7 +47,8 @@ module "network_configs" {
 }
 
 module "opensearch_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//opensearch?ref=v0.30.0"
+  #source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//opensearch?ref=v0.30.0"
+  source = "../../../terraform-cloudinit-templates/opensearch"
   install_dependencies = var.install_dependencies
   opensearch_host = {
     bind_ip            = local.ips[0]
@@ -57,11 +58,12 @@ module "opensearch_configs" {
     manager            = var.opensearch.manager
   }
   opensearch_cluster = {
-    auth_dn_fields      = var.opensearch.auth_dn_fields
-    basic_auth_enabled  = var.opensearch.basic_auth_enabled
-    cluster_name        = var.opensearch.cluster_name
-    seed_hosts          = var.opensearch.seed_hosts
-    verify_domains      = var.opensearch.verify_domains
+    auth_dn_fields             = var.opensearch.auth_dn_fields
+    basic_auth_enabled         = var.opensearch.basic_auth_enabled
+    cluster_name               = var.opensearch.cluster_name
+    seed_hosts                 = var.opensearch.seed_hosts
+    verify_domains             = var.opensearch.verify_domains
+    max_buckets_search_setting = var.opensearch.max_buckets_search_setting
   }
   tls = {
     server_cert = var.opensearch.tls.server.certificate

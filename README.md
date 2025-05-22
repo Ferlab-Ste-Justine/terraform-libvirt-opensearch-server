@@ -64,6 +64,7 @@ This module also supports pre-built images. See the following for the expectatio
   - **seed_hosts**: List of manager nodes that the nodes should synchronize to in order to join the cluster. Should be ips or domain names.
   - **bootstrap_security**: Whether the node should bootstrap opensearch security. One and only one node should have this flag set to true when the opensearch cluster is initially created.
   - **initial_cluster**: Whether this node is created as part of the initial cluster that will form opensearch. Nodes that are added to the cluster afterwards should set this to false.
+  - **max_buckets_search_setting**: Optional search setting for the maximum number of aggregation buckets allowed in a single response. Defaults to **65535**.
   - **tls**: Parameters to setup tls certificates for networking traffic between cluster members and with clients. It takes the following keys:
     - **ca_certificate**: Certificate of the CA used to sign all other certificates (both for the servers and clients)
     - **server**: Tls credentials for the opensearch nodes

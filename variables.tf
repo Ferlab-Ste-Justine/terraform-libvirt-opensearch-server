@@ -152,12 +152,13 @@ variable "fluentd" {
 variable "opensearch" {
   description = "Opensearch configurations"
   type = object({
-    cluster_name          = string
-    manager               = bool
-    seed_hosts            = list(string)
-    bootstrap_security    = bool
-    initial_cluster       = bool
-    tls                   = object({
+    cluster_name               = string
+    manager                    = bool
+    seed_hosts                 = list(string)
+    bootstrap_security         = bool
+    initial_cluster            = bool
+    max_buckets_search_setting = optional(number, 65535)
+    tls                        = object({
       ca_certificate = string
       server         = object({
         key         = string
