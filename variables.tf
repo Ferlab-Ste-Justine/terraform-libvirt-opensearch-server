@@ -52,6 +52,12 @@ variable "macvtap_interfaces" {
   default = []
 }
 
+variable "extra_http_bind_ips" {
+  description = "Extra ip(s) to which the node binds for http communication specifically"
+  type        = list(string)
+  default     = []
+}
+
 variable "cloud_init_volume_pool" {
   description = "Name of the volume pool that will contain the cloud init volume"
   type        = string
