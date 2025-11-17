@@ -158,29 +158,49 @@ variable "fluentd" {
 variable "opensearch" {
   description = "Opensearch configurations"
   type = object({
-    cluster_name          = string
-    manager               = bool
-    seed_hosts            = list(string)
-    bootstrap_security    = bool
-    initial_cluster       = bool
-    tls                   = object({
+    cluster_name       = string
+    manager            = bool
+    seed_hosts         = list(string)
+    bootstrap_security = bool
+    initial_cluster    = bool
+
+    tls = object({
       ca_certificate = string
-      server         = object({
+      server = object({
         key         = string
         certificate = string
       })
-      admin_client   = object({
+      admin_client = object({
         key         = string
         certificate = string
       })
     })
-    auth_dn_fields        = object({
+
+    auth_dn_fields = object({
       admin_common_name = string
       node_common_name  = string
       organization      = string
     })
-    verify_domains      = bool 
-    basic_auth_enabled  = bool
+
+    verify_domains     = bool
+    basic_auth_enabled = bool
+
+    audit = optional(object({
+      enabled      = bool
+      storage_type = string  
+      index        = string
+
+      external = optional(object({
+        http_endpoints       = list(string)
+        enable_ssl           = bool
+        verify_hostnames     = bool
+        use_client_cert_auth = bool
+        username             = optional(string, "")
+        password             = optional(string, "")
+      }), null)
+
+      ignore_users = optional(list(string), [])
+    }), null)
   })
 }
 

@@ -63,6 +63,8 @@ module "opensearch_configs" {
     cluster_name        = var.opensearch.cluster_name
     seed_hosts          = var.opensearch.seed_hosts
     verify_domains      = var.opensearch.verify_domains
+
+    audit = try(var.opensearch.audit, null)
   }
   tls = {
     server_cert = var.opensearch.tls.server.certificate
