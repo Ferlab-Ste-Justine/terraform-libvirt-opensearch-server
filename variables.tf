@@ -186,15 +186,15 @@ variable "opensearch" {
     basic_auth_enabled = bool
 
     audit = optional(object({
-      enabled      = bool
-      storage_type = string  
-      index        = string
+      enabled      = optional(bool, false)
+      storage_type = optional(string, "")  
+      index        = optional(string, "")
 
       external = optional(object({
         http_endpoints       = list(string)
-        enable_ssl           = bool
-        verify_hostnames     = bool
-        use_client_cert_auth = bool
+        enable_ssl           = optional(bool, false)
+        verify_hostnames     = optional(bool, false)
+        use_client_cert_auth = optional(bool, false)
         username             = optional(string, "")
         password             = optional(string, "")
       }), null)
