@@ -63,6 +63,7 @@ This module also supports pre-built images. See the following for the expectatio
   - **cluster_name**: Name of the opensearch cluster. Should be the same for all members of the cluster.
   - **manager**: Whether the ndoe should be a dedicated manager node (otherwise it will be a dedicated worker node).
   - **seed_hosts**: List of manager nodes that the nodes should synchronize to in order to join the cluster. Should be ips or domain names.
+  - **initial_manager_nodes**: Hostnames of the manager nodes that will form the initial cluster (what gets written to `cluster.initial_master_nodes`). These must match the values used for `node.name`/the certificates (for example `ferlab-opensearch-master-1`). OpenSearch 2.x ignores IPs for this setting, so providing the hostnames is mandatory when bootstrapping a brand new cluster.
   - **bootstrap_security**: Whether the node should bootstrap opensearch security. One and only one node should have this flag set to true when the opensearch cluster is initially created.
   - **initial_cluster**: Whether this node is created as part of the initial cluster that will form opensearch. Nodes that are added to the cluster afterwards should set this to false.
   - **tls**: Parameters to setup tls certificates for networking traffic between cluster members and with clients. It takes the following keys:
@@ -79,4 +80,14 @@ This module also supports pre-built images. See the following for the expectatio
     - **organization**: Organization value (in the certificat's subject) that will also be used to identify/authentify the admin client and other nodes.
   - **verify_domains**: Whether the domain information in the node certificates should be verified to see if it corresponds to the nodes (that is additional validation on top of the CN validation).
   - **basic_auth_enabled**: Whether basic auth should be enabled as an alternate to certificate authentication as a way to login.
+  - **audit** *(optional)*: Configuration for the security audit plugin. If omitted, auditing is disabled. When provided, it supports the following keys:
+    - **enabled**: Whether OpenSearch Security audit logging is enabled.
+    - **storage_type**: Either `internal_opensearch` (logs are written to the same cluster) or `external_opensearch` (logs are pushed to a remote cluster).
+    - **index**: Index name to use when writing audit events.
+    - **ignore_users**: Optional list of user names to exclude from audit logging.
+    - **external** *(only when `storage_type` is `external_opensearch`)*: Parameters describing the remote audit cluster.
+      - **http_endpoints**: List of HTTPS endpoints (domains) to which audit logs should be sent.
+      - **enable_ssl** / **verify_hostnames**: SSL options for the outbound connection.
+      - **use_client_cert_auth**: Whether to use the admin client certificate/key for mTLS. When true the module automatically converts the admin key to PKCS#8 on every node so the audit plugin can read it.
+      - **username** / **password**: Optional credentials for basic-auth–protected remote clusters (ignored when `use_client_cert_auth` is true).
 - **install_dependencies**: Whether cloud-init should install external dependencies (should be set to false if you already provide an image with the external dependencies built-in).

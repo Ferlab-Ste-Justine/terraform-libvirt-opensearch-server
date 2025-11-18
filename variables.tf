@@ -161,6 +161,7 @@ variable "opensearch" {
     cluster_name       = string
     manager            = bool
     seed_hosts         = list(string)
+    initial_manager_nodes = list(string)
     bootstrap_security = bool
     initial_cluster    = bool
 

@@ -62,6 +62,7 @@ module "opensearch_configs" {
     basic_auth_enabled  = var.opensearch.basic_auth_enabled
     cluster_name        = var.opensearch.cluster_name
     seed_hosts          = var.opensearch.seed_hosts
+    initial_manager_nodes = var.opensearch.initial_manager_nodes
     verify_domains      = var.opensearch.verify_domains
 
     audit = try(var.opensearch.audit, null)
