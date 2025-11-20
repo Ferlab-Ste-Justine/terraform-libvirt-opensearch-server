@@ -158,14 +158,6 @@ variable "fluentd" {
 variable "opensearch" {
   description = "Opensearch configurations"
   type = object({
-<<<<<<< Updated upstream
-    cluster_name       = string
-    manager            = bool
-    seed_hosts         = list(string)
-    initial_manager_nodes = list(string)
-    bootstrap_security = bool
-    initial_cluster    = bool
-=======
     cluster_name                  = string
     cluster_manager               = optional(bool)
     manager                       = optional(bool)
@@ -174,7 +166,6 @@ variable "opensearch" {
     initial_cluster               = bool
     initial_cluster_manager_nodes = optional(list(string))
     initial_manager_nodes         = optional(list(string))
->>>>>>> Stashed changes
 
     tls = object({
       ca_certificate = string
@@ -202,19 +193,6 @@ variable "opensearch" {
     basic_auth_enabled = bool
 
     audit = optional(object({
-<<<<<<< Updated upstream
-      enabled      = optional(bool, false)
-      storage_type = optional(string, "")  
-      index        = optional(string, "")
-
-      external = optional(object({
-        http_endpoints       = list(string)
-        enable_ssl           = optional(bool, false)
-        verify_hostnames     = optional(bool, false)
-        use_client_cert_auth = optional(bool, false)
-        username             = optional(string, "")
-        password             = optional(string, "")
-=======
       enabled = optional(bool, false)
       index   = string
 
@@ -227,7 +205,6 @@ variable "opensearch" {
           username    = optional(string, "")
           password    = optional(string, "")
         }), null)
->>>>>>> Stashed changes
       }), null)
 
       ignore_users = optional(list(string), [])
@@ -235,26 +212,28 @@ variable "opensearch" {
   })
 
   validation {
-    condition = !(
-      try(var.opensearch.audit.external.use_client_cert_auth, false) &&
-      try(var.opensearch.tls.audit_client, null) == null
-    )
-    error_message = "Provide opensearch.tls.audit_client when audit.external.use_client_cert_auth is enabled."
+    condition     = var.opensearch.cluster_manager != null || var.opensearch.manager != null
+    error_message = "Set opensearch.cluster_manager (preferred) or legacy opensearch.manager to identify the node role."
   }
 
   validation {
-    condition     = var.opensearch.cluster_manager != null || var.opensearch.manager != null
-    error_message = "Set opensearch.cluster_manager (preferred) or legacy opensearch.manager to identify the node role."
+    condition = (
+      var.opensearch.audit == null ||
+      var.opensearch.audit.external == null ||
+      var.opensearch.audit.external.auth == null ||
+      (
+        (trimspace(try(var.opensearch.audit.external.auth.client_cert, "")) == "" &&
+        trimspace(try(var.opensearch.audit.external.auth.client_key, "")) == "") ||
+        (trimspace(try(var.opensearch.audit.external.auth.client_cert, "")) != "" &&
+        trimspace(try(var.opensearch.audit.external.auth.client_key, "")) != "")
+      )
+    )
+    error_message = "When configuring audit.external.auth, provide both client_cert and client_key or leave both empty."
   }
 }
 
 variable "install_dependencies" {
   description = "Whether to install all dependencies in cloud-init"
-<<<<<<< Updated upstream
-  type = bool
-  default = true
-=======
   type        = bool
   default     = true
->>>>>>> Stashed changes
 }

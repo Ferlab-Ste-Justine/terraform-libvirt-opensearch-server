@@ -64,11 +64,7 @@ module "network_configs" {
 }
 
 module "opensearch_configs" {
-<<<<<<< Updated upstream
-  source = "/home/issam/projets/terraform-cloudinit-templates/opensearch"
-=======
   source               = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//opensearch?ref=v0.41.0"
->>>>>>> Stashed changes
   install_dependencies = var.install_dependencies
   opensearch_host = {
     bind_ip             = local.ips[0]
@@ -79,14 +75,6 @@ module "opensearch_configs" {
     cluster_manager     = local.opensearch_is_cluster_manager
   }
   opensearch_cluster = {
-<<<<<<< Updated upstream
-    auth_dn_fields      = var.opensearch.auth_dn_fields
-    basic_auth_enabled  = var.opensearch.basic_auth_enabled
-    cluster_name        = var.opensearch.cluster_name
-    seed_hosts          = var.opensearch.seed_hosts
-    initial_manager_nodes = var.opensearch.initial_manager_nodes
-    verify_domains      = var.opensearch.verify_domains
-=======
     auth_dn_fields                = var.opensearch.auth_dn_fields
     basic_auth_enabled            = var.opensearch.basic_auth_enabled
     cluster_name                  = var.opensearch.cluster_name
@@ -94,7 +82,6 @@ module "opensearch_configs" {
     verify_domains                = var.opensearch.verify_domains
     initial_cluster_manager_nodes = local.opensearch_initial_cluster_manager_nodes
     initial_manager_nodes         = local.opensearch_initial_cluster_manager_nodes
->>>>>>> Stashed changes
 
     audit = try(var.opensearch.audit, null)
   }
