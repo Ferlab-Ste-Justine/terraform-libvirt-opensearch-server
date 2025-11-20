@@ -33,11 +33,7 @@ locals {
   opensearch_initial_cluster_manager_nodes = (
     try(length(var.opensearch.initial_cluster_manager_nodes), 0) > 0 ?
     var.opensearch.initial_cluster_manager_nodes :
-    (
-      var.opensearch.initial_manager_nodes != null ?
-      var.opensearch.initial_manager_nodes :
-      []
-    )
+    var.opensearch.seed_hosts
   )
 }
 
@@ -81,7 +77,6 @@ module "opensearch_configs" {
     seed_hosts                    = var.opensearch.seed_hosts
     verify_domains                = var.opensearch.verify_domains
     initial_cluster_manager_nodes = local.opensearch_initial_cluster_manager_nodes
-    initial_manager_nodes         = local.opensearch_initial_cluster_manager_nodes
 
     audit = try(var.opensearch.audit, null)
   }

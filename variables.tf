@@ -165,7 +165,6 @@ variable "opensearch" {
     bootstrap_security            = bool
     initial_cluster               = bool
     initial_cluster_manager_nodes = optional(list(string))
-    initial_manager_nodes         = optional(list(string))
 
     tls = object({
       ca_certificate = string
