@@ -159,8 +159,7 @@ variable "opensearch" {
   description = "Opensearch configurations"
   type = object({
     cluster_name                  = string
-    cluster_manager               = optional(bool)
-    manager                       = optional(bool)
+    cluster_manager               = bool
     seed_hosts                    = list(string)
     bootstrap_security            = bool
     initial_cluster               = bool
@@ -176,10 +175,6 @@ variable "opensearch" {
         key         = string
         certificate = string
       })
-      audit_client = optional(object({
-        key         = string
-        certificate = string
-      }), null)
     })
 
     auth_dn_fields = object({
@@ -196,39 +191,34 @@ variable "opensearch" {
       index   = string
 
       external = optional(object({
-        http_endpoints = list(string)
+        http_endpoints = optional(list(string), [])
         auth = optional(object({
           ca_cert     = optional(string, "")
           client_cert = optional(string, "")
           client_key  = optional(string, "")
           username    = optional(string, "")
           password    = optional(string, "")
-        }), null)
-      }), null)
+          }), {
+          ca_cert     = ""
+          client_cert = ""
+          client_key  = ""
+          username    = ""
+          password    = ""
+        })
+        }), {
+        http_endpoints = []
+        auth = {
+          ca_cert     = ""
+          client_cert = ""
+          client_key  = ""
+          username    = ""
+          password    = ""
+        }
+      })
 
       ignore_users = optional(list(string), [])
     }), null)
   })
-
-  validation {
-    condition     = var.opensearch.cluster_manager != null || var.opensearch.manager != null
-    error_message = "Set opensearch.cluster_manager (preferred) or legacy opensearch.manager to identify the node role."
-  }
-
-  validation {
-    condition = (
-      var.opensearch.audit == null ||
-      var.opensearch.audit.external == null ||
-      var.opensearch.audit.external.auth == null ||
-      (
-        (trimspace(try(var.opensearch.audit.external.auth.client_cert, "")) == "" &&
-        trimspace(try(var.opensearch.audit.external.auth.client_key, "")) == "") ||
-        (trimspace(try(var.opensearch.audit.external.auth.client_cert, "")) != "" &&
-        trimspace(try(var.opensearch.audit.external.auth.client_key, "")) != "")
-      )
-    )
-    error_message = "When configuring audit.external.auth, provide both client_cert and client_key or leave both empty."
-  }
 }
 
 variable "install_dependencies" {

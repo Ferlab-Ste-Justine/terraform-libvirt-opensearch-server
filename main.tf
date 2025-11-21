@@ -23,12 +23,7 @@ locals {
     [for macvtap_interface in var.macvtap_interfaces : macvtap_interface.ip]
   )
 
-  opensearch_is_cluster_manager = (
-    var.opensearch.cluster_manager != null ? var.opensearch.cluster_manager :
-    (
-      var.opensearch.manager != null ? var.opensearch.manager : false
-    )
-  )
+  opensearch_is_cluster_manager = var.opensearch.cluster_manager
 
   opensearch_initial_cluster_manager_nodes = (
     try(length(var.opensearch.initial_cluster_manager_nodes), 0) > 0 ?
@@ -86,8 +81,6 @@ module "opensearch_configs" {
     ca_cert     = var.opensearch.tls.ca_certificate
     admin_cert  = var.opensearch.tls.admin_client.certificate
     admin_key   = var.opensearch.tls.admin_client.key
-    audit_cert  = try(var.opensearch.tls.audit_client.certificate, "")
-    audit_key   = try(var.opensearch.tls.audit_client.key, "")
   }
 }
 

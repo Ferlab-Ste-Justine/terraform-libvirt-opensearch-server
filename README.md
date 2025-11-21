@@ -61,11 +61,11 @@ This module also supports pre-built images. See the following for the expectatio
     - **custom_value**: Custom buffering configuration to provide that will override the default one. Should be valid fluentd configuration syntax, including the opening and closing ```<buffer>``` tags.
 - **opensearch**: Opensearch configuration. It has the following keys:
   - **cluster_name**: Name of the opensearch cluster. Should be the same for all members of the cluster.
-  - **cluster_manager**: Whether the node should be a dedicated cluster-manager node (otherwise it will be a dedicated data/ingest node). The legacy **manager** input is still accepted for backwards compatibility but will be removed in a future major release.
+  - **cluster_manager**: Whether the node should be a dedicated cluster-manager node (otherwise it will be a dedicated data/ingest node).
   - **seed_hosts**: List of cluster manager nodes that the nodes should synchronize to in order to join the cluster. Should be ips or domain names.
   - **bootstrap_security**: Whether the node should bootstrap opensearch security. One and only one node should have this flag set to true when the opensearch cluster is initially created.
   - **initial_cluster**: Whether this node is created as part of the initial cluster that will form opensearch. Nodes that are added to the cluster afterwards should set this to false.
-  - **initial_cluster_manager_nodes**: Values that get written to both `cluster.initial_cluster_manager_nodes` (new name starting in OpenSearch 2.0) and the legacy `cluster.initial_master_nodes`. On OpenSearch 2.x we have successfully used IPs for this field even though the reference docs mention hostnames. Starting with 3.x, hostnames that match `node.name`/the TLS certificates will be required (see [discovery gateway settings](https://docs.opensearch.org/latest/install-and-configure/configuring-opensearch/discovery-gateway-settings/)), so plan for that when naming nodes.
+  - **initial_cluster_manager_nodes**: Values that get written to `cluster.initial_cluster_manager_nodes`. Provide the same list (usually the cluster-manager hostnames you use in `node.name`) on every node; OpenSearch 2.x and 3.x both honor this setting when forming the initial cluster.
   - **tls**: Parameters to setup tls certificates for networking traffic between cluster members and with clients. It takes the following keys:
     - **ca_certificate**: Certificate of the CA used to sign all other certificates (both for the servers and clients)
     - **server**: Tls credentials for the opensearch nodes
