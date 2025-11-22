@@ -6,7 +6,7 @@ This terraform module is used to provision an opensearch cluster on machines wit
 
 It assumes that pki authentication will be used (both for node to node communication and for client to server authentication, with optional basic auth authentication supported on the client side) and that most settings not required to bootstrap the cluster (users, roles, tenants, etc) will be generated separately using the opensearch api.
 
-It also assumes that there will two types of nodes in your cluster: Dedicated managers and dedicated workers.
+It also assumes that there will two types of nodes in your cluster: Dedicated cluster managers and dedicated workers.
 
 This terraform module has been validated on recent ubuntu images. Your mileage may vary with other distributions.
 
@@ -61,10 +61,11 @@ This module also supports pre-built images. See the following for the expectatio
     - **custom_value**: Custom buffering configuration to provide that will override the default one. Should be valid fluentd configuration syntax, including the opening and closing ```<buffer>``` tags.
 - **opensearch**: Opensearch configuration. It has the following keys:
   - **cluster_name**: Name of the opensearch cluster. Should be the same for all members of the cluster.
-  - **manager**: Whether the ndoe should be a dedicated manager node (otherwise it will be a dedicated worker node).
-  - **seed_hosts**: List of manager nodes that the nodes should synchronize to in order to join the cluster. Should be ips or domain names.
+  - **cluster_manager**: Whether the node should be a dedicated cluster-manager node (otherwise it will be a dedicated data/ingest node).
+  - **seed_hosts**: List of cluster manager nodes that the nodes should synchronize to in order to join the cluster. Should be ips or domain names.
   - **bootstrap_security**: Whether the node should bootstrap opensearch security. One and only one node should have this flag set to true when the opensearch cluster is initially created.
   - **initial_cluster**: Whether this node is created as part of the initial cluster that will form opensearch. Nodes that are added to the cluster afterwards should set this to false.
+  - **initial_cluster_manager_nodes**: Values that get written to `cluster.initial_cluster_manager_nodes`. Provide the same list (usually the cluster-manager hostnames you use in `node.name`) on every node; OpenSearch 2.x and 3.x both honor this setting when forming the initial cluster.
   - **tls**: Parameters to setup tls certificates for networking traffic between cluster members and with clients. It takes the following keys:
     - **ca_certificate**: Certificate of the CA used to sign all other certificates (both for the servers and clients)
     - **server**: Tls credentials for the opensearch nodes
@@ -79,4 +80,14 @@ This module also supports pre-built images. See the following for the expectatio
     - **organization**: Organization value (in the certificat's subject) that will also be used to identify/authentify the admin client and other nodes.
   - **verify_domains**: Whether the domain information in the node certificates should be verified to see if it corresponds to the nodes (that is additional validation on top of the CN validation).
   - **basic_auth_enabled**: Whether basic auth should be enabled as an alternate to certificate authentication as a way to login.
+  - **audit** *(optional)*: Configuration for the security audit plugin. If omitted, auditing is disabled. When provided, it supports the following keys:
+    - **enabled**: Whether OpenSearch Security audit logging is enabled.
+    - **index**: Index name to use when writing audit events.
+    - **ignore_users**: Optional list of user names to exclude from audit logging.
+    - **external** *(optional)*: Parameters describing a remote OpenSearch cluster that should receive audit events. When omitted, logs stay on the local cluster.
+      - **http_endpoints**: List of HTTPS endpoints (domains) to which audit logs should be sent.
+      - **auth** *(optional)*: Authentication block for the remote cluster.
+        - **ca_cert**: PEM of the CA that signed the remote cluster certificates. When omitted, the local CA (`/etc/opensearch/ca-certs/ca.crt`) is reused.
+        - **client_cert** / **client_key**: PEM values for a dedicated client certificate/key to use for mTLS. Both fields must be provided together.
+        - **username** / **password**: Optional credentials for basic-auth–protected remote clusters. Ignored when a client certificate/key are supplied.
 - **install_dependencies**: Whether cloud-init should install external dependencies (should be set to false if you already provide an image with the external dependencies built-in).
