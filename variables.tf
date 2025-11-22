@@ -216,7 +216,8 @@ variable "opensearch" {
         }
       })
 
-      ignore_users = optional(list(string), [])
+      ignore_users    = optional(list(string), [])
+      ignore_requests = optional(list(string), [])
     }), null)
   })
 }
