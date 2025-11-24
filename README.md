@@ -84,6 +84,7 @@ This module also supports pre-built images. See the following for the expectatio
     - **enabled**: Whether OpenSearch Security audit logging is enabled.
     - **index**: Index name to use when writing audit events.
     - **ignore_users**: Optional list of user names to exclude from audit logging.
+    - **ignore_requests**: Optional list of transport actions or HTTP paths to exclude from audit logging.
     - **external** *(optional)*: Parameters describing a remote OpenSearch cluster that should receive audit events. When omitted, logs stay on the local cluster.
       - **http_endpoints**: List of HTTPS endpoints (domains) to which audit logs should be sent.
       - **auth** *(optional)*: Authentication block for the remote cluster.
