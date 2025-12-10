@@ -227,3 +227,18 @@ variable "install_dependencies" {
   type        = bool
   default     = true
 }
+
+variable "snapshot_repository" {
+  description = "Snapshot repository credentials and CA propagated to cloud-init"
+  type = object({
+    access_key = optional(string, "")
+    secret_key = optional(string, "")
+    ca_cert    = optional(string, "")
+  })
+  default = {
+    access_key = ""
+    secret_key = ""
+    ca_cert    = ""
+  }
+  sensitive = true
+}

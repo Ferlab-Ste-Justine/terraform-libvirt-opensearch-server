@@ -82,6 +82,7 @@ module "opensearch_configs" {
     admin_cert  = var.opensearch.tls.admin_client.certificate
     admin_key   = var.opensearch.tls.admin_client.key
   }
+  snapshot_repository = var.snapshot_repository
 }
 
 module "prometheus_node_exporter_configs" {
