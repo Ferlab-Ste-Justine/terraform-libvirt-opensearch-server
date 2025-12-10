@@ -55,7 +55,7 @@ module "network_configs" {
 }
 
 module "opensearch_configs" {
-  source               = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//opensearch?ref=v0.48.0"
+  source               = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//opensearch?ref=feat/os-b-r"
   install_dependencies = var.install_dependencies
   opensearch_host = {
     bind_ip             = local.ips[0]
