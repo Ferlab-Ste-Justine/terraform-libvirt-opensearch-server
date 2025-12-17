@@ -74,6 +74,7 @@ module "opensearch_configs" {
     initial_cluster_manager_nodes = local.opensearch_initial_cluster_manager_nodes
 
     audit = try(var.opensearch.audit, null)
+    index_lifecycle_policies = try(var.opensearch.index_lifecycle_policies, [])
   }
   tls = {
     server_cert = var.opensearch.tls.server.certificate
