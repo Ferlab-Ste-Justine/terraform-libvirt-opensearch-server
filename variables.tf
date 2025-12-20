@@ -219,6 +219,7 @@ variable "opensearch" {
       ignore_users    = optional(list(string), [])
       ignore_requests = optional(list(string), [])
     }), null)
+
   })
 }
 
@@ -226,4 +227,19 @@ variable "install_dependencies" {
   description = "Whether to install all dependencies in cloud-init"
   type        = bool
   default     = true
+}
+
+variable "snapshot_repository" {
+  description = "Snapshot repository credentials and CA propagated to cloud-init"
+  type = object({
+    access_key = optional(string, "")
+    secret_key = optional(string, "")
+    ca_certs   = optional(list(string), [])
+  })
+  default = {
+    access_key = ""
+    secret_key = ""
+    ca_certs   = []
+  }
+  sensitive = true
 }
