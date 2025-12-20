@@ -92,3 +92,6 @@ This module also supports pre-built images. See the following for the expectatio
         - **client_cert** / **client_key**: PEM values for a dedicated client certificate/key to use for mTLS. Both fields must be provided together.
         - **username** / **password**: Optional credentials for basic-auth–protected remote clusters. Ignored when a client certificate/key are supplied.
 - **install_dependencies**: Whether cloud-init should install external dependencies (should be set to false if you already provide an image with the external dependencies built-in).
+- **snapshot_repository**: Optional S3/MinIO repository credentials injected into the OpenSearch keystore. When provided, it must contain:
+  - **access_key** / **secret_key**: Credentials configured in OpenSearch’s keystore (written as `s3.client.default.*`).
+  - **ca_certs**: List of PEM-encoded CA certificates that should be trusted when contacting the repository endpoint. Each entry is a full certificate; the module writes them to `/etc/opensearch/snapshot-repository/ca-*.crt` and imports them into the JDK truststore before provisioning finishes.
